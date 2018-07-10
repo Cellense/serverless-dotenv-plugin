@@ -1,16 +1,17 @@
 const dotenv = require('dotenv');
 const dotenvExpand = require('dotenv-expand');
-const { success, fatal } = require('signale');
+const { success, fatal, star } = require('signale');
 const path = require('path');
 
 function loadEnv(stage) {
+  console.log(stage);
   try {
-    const dotenvPath = (stage === 'production' || stage === 'staging') ? '.env.dev' : `.env.${stage}`;
+    const dotenvPath = stage === 'production' || stage === 'staging' ? `.env.${stage}` : '.env.dev';
     const envVariables = dotenvExpand(dotenv.config({ path: path.resolve(process.cwd(), dotenvPath) })).parsed;
 
-    success(`Loading env variables from ${dotenvPath}`);
+    success(`-- Loading ENV variables from ${dotenvPath}: `);
     Object.entries(envVariables).forEach(([name, value]) => {
-      success(`${name}: ${value}`)
+      star(`${name}: ${value}`)
     });
   } catch (e) {
     fatal(`Could not load env variables from ${dotenvPath}`)
@@ -18,10 +19,8 @@ function loadEnv(stage) {
   }
 }
 
-class ServerlessPlugin {
+module.exports = class ServerlessPlugin {
   constructor(serverless) {
     loadEnv(serverless.processedInput.options.stage)
   }
 }
-
-module.exports = ServerlessPlugin;
