@@ -4,7 +4,7 @@ const { success, fatal, star } = require('signale');
 const path = require('path');
 
 function loadEnv(stage) {
-  console.log(stage);
+  success(`Stage: `, stage);
   try {
     const dotenvPath = stage === 'production' || stage === 'staging' ? `.env.${stage}` : '.env.dev';
     const envVariables = dotenvExpand(dotenv.config({ path: path.resolve(process.cwd(), dotenvPath) })).parsed;
@@ -21,6 +21,6 @@ function loadEnv(stage) {
 
 module.exports = class ServerlessPlugin {
   constructor(serverless) {
-    loadEnv(serverless.processedInput.options.stage)
+    loadEnv(serverless.processedInput.options.stage || serverless.service.custom.defaultStage)
   }
 }
