@@ -1,18 +1,15 @@
 const dotenv = require('dotenv');
 const dotenvExpand = require('dotenv-expand');
-const { success, fatal, star } = require('signale');
+const { fatal, star } = require('signale');
 const path = require('path');
 
 function loadEnv(stage) {
-  success(`Stage: `, stage);
+  star(`Stage: `, stage);
   try {
     const dotenvPath = stage === 'production' || stage === 'staging' ? `.env.${stage}` : '.env.dev';
     const envVariables = dotenvExpand(dotenv.config({ path: path.resolve(process.cwd(), dotenvPath) })).parsed;
 
-    success(`-- Loading ENV variables from ${dotenvPath}: `);
-    Object.entries(envVariables).forEach(([name, value]) => {
-      star(`${name}: ${value}`)
-    });
+    star(`-- Loading ENV variables from ${dotenvPath}: `);
   } catch (e) {
     fatal(`Could not load env variables from ${dotenvPath}`)
     fatal(err)
